@@ -52,6 +52,11 @@ function update() {
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Draw boundaries
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(0, 0, canvas.width, canvas.height);
+    // Draw snake and food
     snake.forEach(segment => drawRect(segment.x, segment.y, 'green'));
     drawRect(food.x, food.y, 'red');
 }
