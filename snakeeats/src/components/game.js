@@ -84,5 +84,22 @@ window.addEventListener('keydown', e => {
     }
 });
 
+export function changeDirection(dir) {
+    switch (dir) {
+        case 'up':
+            if (direction.y === 0) direction = { x: 0, y: -gridSize };
+            break;
+        case 'down':
+            if (direction.y === 0) direction = { x: 0, y: gridSize };
+            break;
+        case 'left':
+            if (direction.x === 0) direction = { x: -gridSize, y: 0 };
+            break;
+        case 'right':
+            if (direction.x === 0) direction = { x: gridSize, y: 0 };
+            break;
+    }
+}
+
 food = getRandomFoodPosition();
 gameLoop();
