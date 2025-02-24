@@ -1,105 +1,121 @@
-const canvas = document.createElement('canvas');
-const ctx = canvas.getContext('2d');
-document.body.appendChild(canvas);
+import React, { useEffect, useRef } from "react";
 
-canvas.width = 400;
-canvas.height = 400;
-
-const gridSize = 20;
+const GRID_SIZE = 20;
 let snake = [{ x: 200, y: 200 }];
 let direction = { x: 0, y: 0 };
 let food = { x: 0, y: 0 };
 let score = 0;
 
 function getRandomFoodPosition() {
-    return {
-        x: Math.floor(Math.random() * (canvas.width / gridSize)) * gridSize,
-        y: Math.floor(Math.random() * (canvas.height / gridSize)) * gridSize,
-    };
+  return {
+    x: Math.floor(Math.random() * (400 / GRID_SIZE)) * GRID_SIZE,
+    y: Math.floor(Math.random() * (400 / GRID_SIZE)) * GRID_SIZE,
+  };
 }
 
-function drawRect(x, y, color) {
-    ctx.fillStyle = color;
-    ctx.fillRect(x, y, gridSize, gridSize);
-}
+const Game = () => {
+  const canvasRef = useRef(null);
 
-function update() {
-    const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
 
-    if (head.x === food.x && head.y === food.y) {
-        score++;
-        food = getRandomFoodPosition();
-    } else {
-        snake.pop();
+    food = getRandomFoodPosition();
+
+    function drawRect(x, y, color) {
+      ctx.fillStyle = color;
+      ctx.fillRect(x, y, GRID_SIZE, GRID_SIZE);
     }
 
-    if (
+    function update() {
+      const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
+
+      if (head.x === food.x && head.y === food.y) {
+        score++;
+        food = getRandomFoodPosition();
+      } else {
+        snake.pop();
+      }
+
+      if (
         head.x < 0 ||
-        head.x >= canvas.width ||
+        head.x >= 400 ||
         head.y < 0 ||
-        head.y >= canvas.height ||
-        snake.some(segment => segment.x === head.x && segment.y === head.y)
-    ) {
+        head.y >= 400 ||
+        snake.some((segment) => segment.x === head.x && segment.y === head.y)
+      ) {
         alert(`Game Over! Your score: ${score}`);
         snake = [{ x: 200, y: 200 }];
         direction = { x: 0, y: 0 };
         score = 0;
         food = getRandomFoodPosition();
+      }
+
+      snake.unshift(head);
     }
 
-    snake.unshift(head);
-}
-
-function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // Draw boundaries
-    ctx.strokeStyle = 'black';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(0, 0, canvas.width, canvas.height);
-    // Draw snake and food
-    snake.forEach(segment => drawRect(segment.x, segment.y, 'green'));
-    drawRect(food.x, food.y, 'red');
-}
-
-function gameLoop() {
-    update();
-    draw();
-    setTimeout(gameLoop, 100);
-}
-
-window.addEventListener('keydown', e => {
-    switch (e.key) {
-        case 'ArrowUp':
-            if (direction.y === 0) direction = { x: 0, y: -gridSize };
-            break;
-        case 'ArrowDown':
-            if (direction.y === 0) direction = { x: 0, y: gridSize };
-            break;
-        case 'ArrowLeft':
-            if (direction.x === 0) direction = { x: -gridSize, y: 0 };
-            break;
-        case 'ArrowRight':
-            if (direction.x === 0) direction = { x: gridSize, y: 0 };
-            break;
+    function draw() {
+      ctx.clearRect(0, 0, 400, 400);
+      ctx.strokeStyle = "black";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(0, 0, 400, 400);
+      snake.forEach((segment) => drawRect(segment.x, segment.y, "green"));
+      drawRect(food.x, food.y, "red");
     }
-});
+
+    function gameLoop() {
+      update();
+      draw();
+      setTimeout(gameLoop, 100);
+    }
+
+    gameLoop();
+  }, []);
+
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      switch (e.key) {
+        case "ArrowUp":
+          if (direction.y === 0) direction = { x: 0, y: -GRID_SIZE };
+          break;
+        case "ArrowDown":
+          if (direction.y === 0) direction = { x: 0, y: GRID_SIZE };
+          break;
+        case "ArrowLeft":
+          if (direction.x === 0) direction = { x: -GRID_SIZE, y: 0 };
+          break;
+        case "ArrowRight":
+          if (direction.x === 0) direction = { x: GRID_SIZE, y: 0 };
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, []);
+
+  return (
+    <div style={{ textAlign: "center" }}>
+      <canvas ref={canvasRef} width={380} height={380} style={{ border: "2px solid black" }}></canvas>
+    </div>
+  );
+};
 
 export function changeDirection(dir) {
-    switch (dir) {
-        case 'up':
-            if (direction.y === 0) direction = { x: 0, y: -gridSize };
-            break;
-        case 'down':
-            if (direction.y === 0) direction = { x: 0, y: gridSize };
-            break;
-        case 'left':
-            if (direction.x === 0) direction = { x: -gridSize, y: 0 };
-            break;
-        case 'right':
-            if (direction.x === 0) direction = { x: gridSize, y: 0 };
-            break;
-    }
+  switch (dir) {
+    case "up":
+      if (direction.y === 0) direction = { x: 0, y: -GRID_SIZE };
+      break;
+    case "down":
+      if (direction.y === 0) direction = { x: 0, y: GRID_SIZE };
+      break;
+    case "left":
+      if (direction.x === 0) direction = { x: -GRID_SIZE, y: 0 };
+      break;
+    case "right":
+      if (direction.x === 0) direction = { x: GRID_SIZE, y: 0 };
+      break;
+  }
 }
 
-food = getRandomFoodPosition();
-gameLoop();
+export default Game;
