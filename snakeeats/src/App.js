@@ -3,9 +3,11 @@ import "./App.css";
 import Game, { changeDirection } from "./components/Game";
 
 function App() {
+  const [score, setScore] = React.useState(0);
   return (
     <div className="App">
-      <Game />
+      <h3>Score: {score}</h3>
+      <Game setScore={setScore}/>
       <div className="controls">
         <div className="control-row">
           <button onClick={() => changeDirection("up")}>Up</button>

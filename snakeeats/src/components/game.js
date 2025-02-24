@@ -13,7 +13,7 @@ function getRandomFoodPosition() {
   };
 }
 
-const Game = () => {
+const Game = ({setScore}) => {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -32,6 +32,7 @@ const Game = () => {
 
       if (head.x === food.x && head.y === food.y) {
         score++;
+        setScore(score);
         food = getRandomFoodPosition();
       } else {
         snake.pop();
