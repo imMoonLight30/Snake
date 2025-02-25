@@ -97,7 +97,7 @@ const Game = ({setScore}) => {
 
   return (
     <div style={{ textAlign: "center" }}>
-      <canvas ref={canvasRef} width={380} height={380} style={{ border: "2px solid black" }}></canvas>
+      <canvas ref={canvasRef} width={400} height={400} style={{ border: "2px solid black" }}></canvas>
     </div>
   );
 };
